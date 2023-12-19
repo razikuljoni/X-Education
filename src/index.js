@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express')
 const cors = require('cors');
+const { UNAUTHORIZED, NOT_FOUND } = require('http-status-codes');
 require('dotenv').config();
 const app = express();
 
@@ -26,10 +27,25 @@ async function run() {
             console.log(`X-Education app listening on port ${process.env.PORT}`)
         });
 
-        app.get('/', (req, res) => {
-            res.send('Hello World!')
-        })
+        //INFO: ROUTES
+        app.get("/api/course", (req, res) => {
+            res.send("Hello World!")
+        });
 
+        //INFO: handle not found
+        app.use((req, res, next) => {
+            res.status(NOT_FOUND).json({
+                success: false,
+                message: 'Not Found',
+                errorMessages: [
+                    {
+                        path: req.originalUrl,
+                        message: 'API Not Found',
+                    },
+                ],
+            });
+            next();
+        });
 
     } catch (error) {
         console.dir(error)
