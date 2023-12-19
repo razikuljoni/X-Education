@@ -62,7 +62,11 @@ async function run() {
         });
 
         //INFO: delete course
-
+        app.delete('/api/course/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await coursCollection.deleteOne({ _id: new ObjectId(id) });
+            res.send(result);
+        });
 
         //INFO: handle not found
         app.use((req, res, next) => {
