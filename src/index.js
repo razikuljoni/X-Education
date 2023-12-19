@@ -54,6 +54,12 @@ async function run() {
         });
 
         //INFO: update course
+        app.patch('/api/course/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedCourse = req.body;
+            const result = await coursCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCourse });
+            res.send(result);
+        });
 
         //INFO: delete course
 
