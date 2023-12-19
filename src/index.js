@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express')
 const cors = require('cors');
-const { UNAUTHORIZED, NOT_FOUND } = require('http-status-codes');
+const { UNAUTHORIZED, NOT_FOUND, CREATED } = require('http-status-codes');
 require('dotenv').config();
 const app = express();
 
@@ -20,7 +20,7 @@ const client = new MongoClient(process.env.MONGODB_URL, {
 async function run() {
     try {
         await client.connect();
-        await client.db("X-Education").command({ ping: 1 });
+        const coursCollection = client.db("X-Education").collection("courses");
         console.log("Database Connection Established!")
 
         app.listen(process.env.PORT, () => {
@@ -28,8 +28,22 @@ async function run() {
         });
 
         //INFO: ROUTES
-        app.get("/api/course", (req, res) => {
-            res.send("Hello World!")
+        app.get("/", (req, res) => {
+            res.send("X-Education Server is running!")
+        });
+
+        //INFO: add a new course
+        app.post('/api/course', async (req, res) => {
+            const course = req.body;
+            await coursCollection.insertOne(course);
+            res.json({ statusCode: CREATED, message: "The course has been added successfully" });
+
+        });
+
+        //INFO: get all courses
+        app.get('/api/course', async (req, res) => {
+            const courses = await coursCollection.find({}).toArray();
+            res.send(courses);
         });
 
         //INFO: handle not found
