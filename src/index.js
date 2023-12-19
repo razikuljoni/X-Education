@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express')
 const cors = require('cors');
 const { UNAUTHORIZED, NOT_FOUND, CREATED } = require('http-status-codes');
@@ -45,6 +45,18 @@ async function run() {
             const courses = await coursCollection.find({}).toArray();
             res.send(courses);
         });
+
+        //INFO: get course by id
+        app.get('/api/course/:id', async (req, res) => {
+            const id = req.params.id;
+            const courses = await coursCollection.findOne({ _id: new ObjectId(id) });
+            res.send(courses);
+        });
+
+        //INFO: update course
+
+        //INFO: delete course
+
 
         //INFO: handle not found
         app.use((req, res, next) => {
